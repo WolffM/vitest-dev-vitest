@@ -18,21 +18,22 @@ interface TemporalLike {
   [Symbol.toStringTag]: `Temporal.${string}`
 }
 
-type MockedTime = string | number | Date | TemporalLike
+export type MockedTime = string | number | Date | TemporalLike
 
-function isTemporalLike(now: unknown): now is TemporalLike {
-  if (!now || typeof now !== 'object') {
-    return false
-  }
-  return typeof now[Symbol.toStringTag] === 'string'
-    && now[Symbol.toStringTag].startsWith('Temporal.')
-}
-
-function toDate(now?: MockedTime) {
+function toDate(now?: MockedTime): Date | undefined {
   if (typeof now === 'undefined' || now instanceof Date) {
     return now
   }
-  return new Date(isTemporalLike(now) ? String(now) : now)
+
+  try {
+    return Reflect.construct(Date, [now]) as Date
+  }
+  catch (error) {
+    if (error instanceof TypeError) {
+      return new Date(String(now))
+    }
+    throw error
+  }
 }
 
 export class FakeTimers {

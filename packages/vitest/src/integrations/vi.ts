@@ -10,6 +10,7 @@ import type { Disposable } from 'vitest/optional-runtime-types.js'
 import type { RuntimeOptions, SerializedConfig } from '../runtime/config'
 import type { VitestMocker } from '../runtime/moduleRunner/moduleMocker'
 import type { MockFactoryWithHelper, MockOptions } from '../types/mocker'
+import type { MockedTime } from './mock/timers'
 import { clearAllMocks, fn, isMockFunction, resetAllMocks, restoreAllMocks, spyOn } from '@vitest/spy'
 import { assertTypes, createSimpleStackTrace } from '@vitest/utils/helpers'
 import { getWorkerState, isChildProcess, resetModules, waitForImportsToResolve } from '../runtime/utils'
@@ -18,10 +19,6 @@ import { FakeTimers } from './mock/timers'
 import { waitFor, waitUntil } from './wait'
 
 type ESModuleExports = Record<string, unknown>
-interface TemporalLike {
-  [Symbol.toStringTag]: `Temporal.${string}`
-}
-type MockedTime = number | string | Date | TemporalLike
 
 export interface VitestUtils {
   /**
