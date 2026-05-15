@@ -1,3 +1,4 @@
+import { Temporal } from 'temporal-polyfill'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
 describe('testing date mock functionality', () => {
@@ -38,5 +39,13 @@ describe('testing date mock functionality', () => {
     vi.setSystemTime(new Date(2000, 1, 1))
 
     expect(new Date()).toBeInstanceOf(Date)
+  })
+
+  test('setting time with Temporal.Instant', () => {
+    const instant = Temporal.Instant.from('2020-01-01T00:00:00.000Z')
+
+    vi.setSystemTime(instant)
+
+    expect(Date.now()).toBe(instant.epochMilliseconds)
   })
 })
