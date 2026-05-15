@@ -1028,7 +1028,19 @@ await vi.runOnlyPendingTimersAsync()
 ### vi.setSystemTime
 
 ```ts
-function setSystemTime(date: string | number | Date | Temporal): Vitest
+function setSystemTime(
+  date:
+    | string
+    | number
+    | Date
+    | Temporal.Instant
+    | Temporal.ZonedDateTime
+    | Temporal.PlainDateTime
+    | Temporal.PlainDate
+    | Temporal.PlainTime
+    | Temporal.PlainYearMonth
+    | Temporal.PlainMonthDay
+): Vitest
 ```
 
 If fake timers are enabled, this method simulates a user changing the system clock (will affect date related API like `hrtime`, `performance.now` or `new Date()`) - however, it will not fire any timers. If fake timers are not enabled, this method will only mock `Date.*` calls.

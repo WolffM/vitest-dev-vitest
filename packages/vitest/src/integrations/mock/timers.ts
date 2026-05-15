@@ -20,12 +20,19 @@ interface TemporalLike {
 
 type MockedTime = string | number | Date | TemporalLike
 
+function isTemporalLike(now: unknown): now is TemporalLike {
+  if (!now || typeof now !== 'object') {
+    return false
+  }
+  return typeof now[Symbol.toStringTag] === 'string'
+    && now[Symbol.toStringTag].startsWith('Temporal.')
+}
+
 function toDate(now?: MockedTime) {
   if (typeof now === 'undefined' || now instanceof Date) {
     return now
   }
-  const isTemporal = Object.prototype.toString.call(now).startsWith('[object Temporal.')
-  return new Date(isTemporal ? String(now) : now)
+  return new Date(isTemporalLike(now) ? String(now) : now)
 }
 
 export class FakeTimers {
