@@ -10,6 +10,7 @@ import type { Disposable } from 'vitest/optional-runtime-types.js'
 import type { RuntimeOptions, SerializedConfig } from '../runtime/config'
 import type { VitestMocker } from '../runtime/moduleRunner/moduleMocker'
 import type { MockFactoryWithHelper, MockOptions } from '../types/mocker'
+import type { MockedTime } from './mock/timers'
 import { clearAllMocks, fn, isMockFunction, resetAllMocks, restoreAllMocks, spyOn } from '@vitest/spy'
 import { assertTypes, createSimpleStackTrace } from '@vitest/utils/helpers'
 import { getWorkerState, isChildProcess, resetModules, waitForImportsToResolve } from '../runtime/utils'
@@ -84,7 +85,7 @@ export interface VitestUtils {
    * If fake timers are enabled, this method simulates a user changing the system clock (will affect date related API like `hrtime`, `performance.now` or `new Date()`) - however, it will not fire any timers.
    * If fake timers are not enabled, this method will only mock `Date.*` and `new Date()` calls.
    */
-  setSystemTime: (time: number | string | Date) => VitestUtils
+  setSystemTime: (time: MockedTime) => VitestUtils
   /**
    * Returns mocked current date. If date is not mocked the method will return `null`.
    */
@@ -582,7 +583,7 @@ function createVitest(): VitestUtils {
       return timers().getTimerCount()
     },
 
-    setSystemTime(time: number | string | Date) {
+    setSystemTime(time: MockedTime) {
       timers().setSystemTime(time)
       return utils
     },

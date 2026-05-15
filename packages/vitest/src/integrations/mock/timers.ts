@@ -14,6 +14,28 @@ import { withGlobal } from '@sinonjs/fake-timers'
 import { isChildProcess } from '../../runtime/utils'
 import { mockDate, RealDate, resetDate } from './date'
 
+interface TemporalLike {
+  [Symbol.toStringTag]: `Temporal.${string}`
+}
+
+export type MockedTime = string | number | Date | TemporalLike
+
+function toDate(now?: MockedTime): Date | undefined {
+  if (typeof now === 'undefined' || now instanceof Date) {
+    return now
+  }
+
+  try {
+    return Reflect.construct(Date, [now]) as Date
+  }
+  catch (error) {
+    if (error instanceof TypeError) {
+      return new Date(String(now))
+    }
+    throw error
+  }
+}
+
 export class FakeTimers {
   private _global: typeof globalThis
   private _clock!: InstalledClock
@@ -184,8 +206,8 @@ export class FakeTimers {
     }
   }
 
-  setSystemTime(now?: string | number | Date): void {
-    const date = (typeof now === 'undefined' || now instanceof Date) ? now : new Date(now)
+  setSystemTime(now?: MockedTime): void {
+    const date = toDate(now)
     if (this._fakingTime) {
       this._clock.setSystemTime(date)
     }
