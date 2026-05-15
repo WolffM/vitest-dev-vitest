@@ -18,6 +18,10 @@ import { FakeTimers } from './mock/timers'
 import { waitFor, waitUntil } from './wait'
 
 type ESModuleExports = Record<string, unknown>
+interface TemporalLike {
+  [Symbol.toStringTag]: `Temporal.${string}`
+}
+type MockedTime = number | string | Date | TemporalLike
 
 export interface VitestUtils {
   /**
@@ -84,7 +88,7 @@ export interface VitestUtils {
    * If fake timers are enabled, this method simulates a user changing the system clock (will affect date related API like `hrtime`, `performance.now` or `new Date()`) - however, it will not fire any timers.
    * If fake timers are not enabled, this method will only mock `Date.*` and `new Date()` calls.
    */
-  setSystemTime: (time: number | string | Date) => VitestUtils
+  setSystemTime: (time: MockedTime) => VitestUtils
   /**
    * Returns mocked current date. If date is not mocked the method will return `null`.
    */
@@ -582,7 +586,7 @@ function createVitest(): VitestUtils {
       return timers().getTimerCount()
     },
 
-    setSystemTime(time: number | string | Date) {
+    setSystemTime(time: MockedTime) {
       timers().setSystemTime(time)
       return utils
     },

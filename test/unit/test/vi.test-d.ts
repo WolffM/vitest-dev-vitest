@@ -1,3 +1,4 @@
+import { Temporal } from 'temporal-polyfill'
 import { expectTypeOf, test, vi } from 'vitest'
 
 test('vi.waitUntil correctly resolves return type', () => {
@@ -13,4 +14,8 @@ test('vi.waitUntil correctly resolves return type', () => {
   expectTypeOf(vi.waitUntil(() => undefined as undefined | number)).resolves.toEqualTypeOf<number>()
   expectTypeOf(vi.waitUntil(() => false as false | number)).resolves.toEqualTypeOf<number>()
   expectTypeOf(vi.waitUntil(() => 0 as 0 | string)).resolves.toEqualTypeOf<string>()
+})
+
+test('vi.setSystemTime accepts Temporal values', () => {
+  vi.setSystemTime(Temporal.Instant.from('2020-01-01T00:00:00.000Z'))
 })
